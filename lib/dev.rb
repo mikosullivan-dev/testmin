@@ -2,4 +2,6 @@
 system 'clear'
 require 'time'
 
-puts Time.new()
+dir_key = './fred';
+dir_key = dir_key.gsub(/\A.\//, '')
+puts dir_key
