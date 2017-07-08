@@ -180,8 +180,8 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# dir_settings
 	#
-	def Testmin.dir_settings(log, run_dirs, dir_path)
-		# Testmin.hr(dir_path)
+	def Testmin.dir_settings(log, run_dirs, dir_path, opts = {})
+		# Testmin.hr(dir_path )
 		
 		# normalize dir_path to remove trailing / if there is one
 		dir_path = dir_path.gsub(/\/+\z/, '')
@@ -190,7 +190,6 @@ module Testmin
 		dir = {}
 		dir['path'] = dir_path
 		dir['settings'] = {}
-		run_dirs.push(dir)
 		
 		# build settings path
 		settings_path = dir_path + '/' + DIR_SETTINGS_FILE
@@ -218,13 +217,28 @@ module Testmin
 			end
 		end
 		
-		# set default dir-order
-		if dir['settings']['dir-order'].nil?()
-			# special case: root dir defaults to -1 in order
-			if dir_path == '.'
-				dir['settings']['dir-order'] = -1
-			else
-				dir['settings']['dir-order'] = 1000000
+		# src: if a source directory is given, recurse to get that directory's
+		# settings
+		if not dir['settings']['src'].nil?
+			return Testmin.dir_settings(
+				log,
+				run_dirs,
+				dir['settings']['src'],
+				{'dir-order'=>dir['settings']['dir-order']}
+			)
+		end
+		
+		# set dir-order
+		if not opts['dir-order'].nil?
+			dir['settings']['dir-order'] = opts['dir-order']
+		else
+			if dir['settings']['dir-order'].nil?()
+				# special case: root dir defaults to -1 in order
+				if dir_path == '.'
+					dir['settings']['dir-order'] = -1
+				else
+					dir['settings']['dir-order'] = 1000000
+				end
 			end
 		end
 		
@@ -236,6 +250,9 @@ module Testmin
 				raise 'files setting is not an hash for ' + dir_path
 			end
 		end
+		
+		# add to run_dirs
+		run_dirs.push(dir)
 		
 		# return success
 		return true
@@ -940,7 +957,7 @@ module Testmin
 	# run_tests
 	#
 	def Testmin.run_tests()
-		# Testmin.hr(__method__.to_s)
+		Testmin.hr(__method__.to_s)
 		
 		# get command line options
 		Testmin.process_cmd_opts()
@@ -1487,6 +1504,10 @@ module Testmin
 			end
 		end
 		
+		# TESTING
+		# puts 'early exit'
+		# exit
+		
 		# if only the root directory, don't bother outputting the HR for it
 		if run_dirs.length == 1
 			@dir_hrs = false
@@ -1577,41 +1598,4 @@ if caller().length <= 0
 end
 #
 # run tests if this script was not loaded by another script
-#---------------------------------------------------------------------------
-
-
-
-
-__END__
-
-#---------------------------------------------------------------------------
-# get_cmd_opts
-#
-def Testmin.get_cmd_opts()
-	Testmin.hr(__method__.to_s)
-	
-	# initialize return value
-	rv = {}
-	
-	# get command line options
-	OptionParser.new do |opts|
-		# convenience
-		submit = Testmin.settings['submit']
-		
-		# comments
-		opts.on('-z', '--no-comments', 'do  not prompt for comments') do |bool|
-			submit['comments'] = false
-		end
-		
-		# output
-		opts.on("-o", "--output = normal|silent", 'run silently') do
-			@silent = true
-		end
-	end.parse!
-	
-	# return
-	return
-end
-#
-# get_cmd_opts
 #---------------------------------------------------------------------------
