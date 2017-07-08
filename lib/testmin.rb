@@ -142,7 +142,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# done
 	#
-	def Testmin.done(opts = {})
+	def self.done(opts = {})
 		# Testmin.hr(__method__.to_s)
 		
 		# cannot mark done if _devshortcut_called is true
@@ -168,7 +168,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# devshortcut
 	#
-	def Testmin.devshortcut()
+	def self.devshortcut()
 		@devshortcut_called = true
 		return false
 	end
@@ -180,8 +180,14 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# dir_settings
 	#
-	def Testmin.dir_settings(log, run_dirs, dir_path, opts = {})
-		# Testmin.hr(dir_path )
+	def self.dir_settings(log, run_dirs, dir_path, opts = {})
+		# hr __method__.to_s + ': ' + dir_path.class.to_s
+		
+		# dir_path should be defined
+		if dir_path.nil?
+			puts Thread.current.backtrace.join("\n")
+			exit
+		end
 		
 		# normalize dir_path to remove trailing / if there is one
 		dir_path = dir_path.gsub(/\/+\z/, '')
@@ -265,7 +271,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# dir_check
 	#
-	def Testmin.dir_check(log, dir)
+	def self.dir_check(log, dir)
 		# Testmin.hr(__method__.to_s)
 		
 		# convenience variables
@@ -331,7 +337,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# dir_run
 	#
-	def Testmin.dir_run(log, dir, dir_order)
+	def self.dir_run(log, dir, dir_order)
 		# Testmin.hr(__method__.to_s)
 		
 		# verbosify
@@ -423,7 +429,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# get_file_settings
 	#
-	def Testmin.get_file_settings(file_settings)
+	def self.get_file_settings(file_settings)
 		# Testmin.hr(__method__.to_s)
 		
 		# if false
@@ -452,7 +458,7 @@ module Testmin
 	# TODO: The code in this routine gets a litle spaghettish. Need to clean it
 	# up.
 	#
-	def Testmin.file_run(dir_files, file_path, file_settings, file_order)
+	def self.file_run(dir_files, file_path, file_settings, file_order)
 		# Testmin.hr(__method__.to_s)
 		
 		# get file settings
@@ -558,7 +564,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# os_info
 	#
-	def Testmin.os_info(versions)
+	def self.os_info(versions)
 		os = versions['os'] = {}
 		
 		# kernel version
@@ -577,7 +583,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# versions
 	#
-	def Testmin.versions(log)
+	def self.versions(log)
 		# Testmin.hr(__method__.to_s)
 		
 		# initliaze versions hash
@@ -600,7 +606,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# last_line
 	#
-	def Testmin.last_line(str)
+	def self.last_line(str)
 		# Testmin.hr(__method__.to_s)
 		
 		# early exit: str is not a string
@@ -630,7 +636,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# parse_results
 	#
-	def Testmin.parse_results(stdout)
+	def self.parse_results(stdout)
 		# Testmin.hr(__method__.to_s)
 		
 		# get last line
@@ -664,7 +670,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# get_results
 	#
-	def Testmin.get_results(stdout)
+	def self.get_results(stdout)
 		# Testmin.hr(__method__.to_s)
 		
 		# get results hash
@@ -691,7 +697,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# create_log
 	#
-	def Testmin.create_log()
+	def self.create_log()
 		# initialize log object
 		log = {}
 		log['id'] = ('a'..'z').to_a.shuffle[0,10].join
@@ -701,12 +707,12 @@ module Testmin
 		log['timestamp'] = Time.new.to_s
 		
 		# get project id if there is one
-		if not Testmin.settings['project'].nil?
-			log['project'] = Testmin.settings['project']
+		if not self.settings['project'].nil?
+			log['project'] = self.settings['project']
 		end
 		
 		# add system version info
-		Testmin.versions(log)
+		self.versions(log)
 		
 		# return
 		return log
@@ -719,7 +725,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# hr
 	#
-	def Testmin.hr(opts={})
+	def self.hr(opts={})
 		# set opts from scalar or hash
 		if opts.nil?
 			opts = {}
@@ -732,9 +738,9 @@ module Testmin
 		
 		# output
 		if opts['title'] == ''
-			Testmin.v opts['dash'] * HR_LENGTH
+			self.v opts['dash'] * HR_LENGTH
 		else
-			Testmin.v (opts['dash'] * 3) + ' ' + opts['title'] + ' ' + (opts['dash'] * (HR_LENGTH - 5 - opts['title'].length))
+			self.v (opts['dash'] * 3) + ' ' + opts['title'] + ' ' + (opts['dash'] * (HR_LENGTH - 5 - opts['title'].length))
 		end
 	end
 	#
@@ -743,22 +749,9 @@ module Testmin
 	
 	
 	#---------------------------------------------------------------------------
-	# devexit
-	#
-	def Testmin.devexit()
-		# Testmin.hr(__method__.to_s)
-		puts "\n", '[devexit]'
-		exit
-	end
-	#
-	# devexit
-	#---------------------------------------------------------------------------
-	
-	
-	#---------------------------------------------------------------------------
 	# randstr
 	#
-	def Testmin.randstr()
+	def self.randstr()
 		return (('a'..'z').to_a + (0..9).to_a).shuffle[0,8].join
 	end
 	#
@@ -769,8 +762,8 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# val_to_bool
 	#
-	def Testmin.val_to_bool(t)
-		# Testmin.hr(__method__.to_s)
+	def self.val_to_bool(t)
+		# self.hr(__method__.to_s)
 		
 		# String
 		if t.is_a?(String)
@@ -797,8 +790,8 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# get_cmd_opts
 	#
-	def Testmin.get_cmd_opts()
-		# Testmin.hr(__method__.to_s)
+	def self.get_cmd_opts()
+		# self.hr(__method__.to_s)
 		
 		# initialize return value
 		rv = {}
@@ -807,7 +800,7 @@ module Testmin
 		OptionParser.new do |opts|
 			# submit
 			opts.on("-sSUBMIT", "--submit = y|n", 'submit results to an online service') do |val|
-				rv['submit'] = Testmin.val_to_bool(val)
+				rv['submit'] = self.val_to_bool(val)
 			end
 			
 			# output
@@ -822,7 +815,7 @@ module Testmin
 			
 			# no-comments
 			opts.on('-z', '--no-comments', 'do  not prompt for comments') do |bool|
-				rv['no-comments'] = Testmin.val_to_bool(val)
+				rv['no-comments'] = self.val_to_bool(val)
 			end
 			
 			# version
@@ -842,8 +835,8 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# process_cmd_opts
 	#
-	def Testmin.process_cmd_opts()
-		# Testmin.hr(__method__.to_s)
+	def self.process_cmd_opts()
+		# self.hr(__method__.to_s)
 		
 		# get options
 		opts = Testmin.get_cmd_opts()
@@ -918,7 +911,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# v (verbose)
 	#
-	def Testmin.v(str = '')
+	def self.v(str = '')
 		# Testmin.hr(__method__.to_s)
 		
 		# if silent, do nothing
@@ -937,7 +930,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# vp (verbose print)
 	#
-	def Testmin.vp(str = '')
+	def self.vp(str = '')
 		# Testmin.hr(__method__.to_s)
 		
 		# if silent, do nothing
@@ -956,8 +949,8 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# run_tests
 	#
-	def Testmin.run_tests()
-		Testmin.hr(__method__.to_s)
+	def self.run_tests()
+		# Testmin.hr(__method__.to_s)
 		
 		# get command line options
 		Testmin.process_cmd_opts()
@@ -1001,7 +994,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# settings
 	#
-	def Testmin.settings()
+	def self.settings()
 		# Testmin.hr(__method__.to_s)
 		
 		# if @settings is nil, initalize settings
@@ -1032,7 +1025,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# yes_no
 	#
-	def Testmin.yes_no(prompt)
+	def self.yes_no(prompt)
 		# Testmin.hr(__method__.to_s)
 		
 		# output prompt
@@ -1071,7 +1064,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# submit_ask
 	#
-	def Testmin.submit_ask()
+	def self.submit_ask()
 		# Testmin.hr(__method__.to_s)
 		
 		# if @auto_submit is set, use that as the return value
@@ -1099,7 +1092,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# email_ask
 	#
-	def Testmin.email_ask(results)
+	def self.email_ask(results)
 		# Testmin.hr(__method__.to_s)
 		
 		# convenience
@@ -1149,7 +1142,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# comments_ask
 	#
-	def Testmin.comments_ask(results)
+	def self.comments_ask(results)
 		# Testmin.hr(__method__.to_s)
 		
 		# convenience
@@ -1217,7 +1210,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# get_line
 	#
-	def Testmin.get_line(prompt)
+	def self.get_line(prompt)
 		# Testmin.hr(__method__.to_s)
 		
 		# loop until we get a line with some content
@@ -1241,11 +1234,11 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# collapse
 	#
-	def Testmin.collapse(str)
+	def self.collapse(str)
 		# Testmin.hr(__method__.to_s)
 		
 		# only process defined strings
-		if str.is_a?(String) and (not str.nil?())
+		if str.is_a?(String)
 			str = str.gsub(/^[ \t\r\n]+/, '')
 			str = str.gsub(/[ \t\r\n]+$/, '')
 			str = str.gsub(/[ \t\r\n]+/, ' ')
@@ -1262,7 +1255,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# print_table
 	#
-	def Testmin.print_table(table)
+	def self.print_table(table)
 		# initialize widths array
 		widths = []
 		
@@ -1298,7 +1291,7 @@ module Testmin
 	# TODO: Need to generalize this routine for submitting to other test
 	# logging sites.
 	#
-	def Testmin.submit_results(results)
+	def self.submit_results(results)
 		# Testmin.hr(__method__.to_s)
 		
 		# load settings
@@ -1373,7 +1366,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# submit_success
 	#
-	def Testmin.submit_success(site, results)
+	def self.submit_success(site, results)
 		# Testmin.hr(__method__.to_s)
 		
 		# load cgi libary
@@ -1426,7 +1419,7 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# message
 	#
-	def Testmin.message(message_id, opts={})
+	def self.message(message_id, opts={})
 		# Testmin.hr(__method__.to_s)
 		
 		# default options
@@ -1468,7 +1461,7 @@ module Testmin
 	# This routine does the actual job of running the tests. It returns false
 	# when an error is reached. If it gets to the end it returns true.
 	#
-	def Testmin.process_tests(log)
+	def self.process_tests(log)
 		# Testmin.hr(__method__.to_s)
 		
 		# create test_id
@@ -1503,10 +1496,6 @@ module Testmin
 				return false
 			end
 		end
-		
-		# TESTING
-		# puts 'early exit'
-		# exit
 		
 		# if only the root directory, don't bother outputting the HR for it
 		if run_dirs.length == 1
@@ -1547,6 +1536,108 @@ module Testmin
 	#
 	# process_tests
 	#---------------------------------------------------------------------------
+	
+	
+	#===========================================================================
+	# ruby utilities for running tests
+	#
+	
+	# isa
+	def self.isa(test_name, my_object, class_should, opts={})
+		# hr __method__.to_s
+		
+		# default options
+		opts = {'should'=>true}.merge(opts)
+		
+		if opts['should']
+			if not my_object.is_a?(class_should)
+				raise test_name + ' - isa: should be class ' + class_should.to_s + ' but instead is class ' + my_object.class.to_s
+			end
+		else
+			if my_object.is_a?(class_should)
+				raise test_name + 'isa-should-not: should not be class ' + class_should.to_s + ' but is'
+			end
+		end	#
+	end
+	
+	# comp
+	def self.comp(test_name, is, should, opts={})
+		# hr('comp()')
+		
+		# default options
+		opts = {'should'=>true}.merge(opts)
+		
+		# test
+		if opts['should']
+			if is != should
+				tmfail test_name, "not equal\nis: " + is.to_s() + "\nshould: " + should.to_s()
+			end
+		else
+			if is == should
+				tmfail test_name, "equal\nis: " + is.to_s() + "\nshould: " + should.to_s()
+			end
+		end
+		
+		# return
+		return true
+	end
+	
+	# defined
+	def self.defined(test_name, object, opts={})
+		# hr __method__.to_s
+		
+		# default options
+		opts = {'should'=>true}.merge(opts)
+		
+		# test
+		if opts['should']
+			if object.nil?
+				 tmfail(test_name, 'not defined but should be')
+			end
+		else
+		# 	if not object.nil?
+		# 		tmfail(test_name, 'defined but should not be'
+		# 	end
+		end
+		
+		# return
+		return true
+	end
+	
+	# tmfail
+	def self.tmfail(test_name, message)
+		# hr('fail()')
+		
+		# title
+		puts
+		self.hr('dash'=>'#')
+		puts '# fail: ' + test_name
+		puts '#'
+		
+		# output message
+		puts message
+		
+		# bottom
+		puts '#'
+		puts '# fail: ' + test_name
+		self.hr('dash'=>'#')
+		puts
+		
+		# we're done
+		exit
+	end
+	
+	# devexit
+	def self.devexit()
+		# self.hr(__method__.to_s)
+		puts "\n", '[devexit]'
+		exit
+	end
+	
+	#
+	# ruby utilities for running tests
+	#===========================================================================
+	
 end
 #
 # Testmin
