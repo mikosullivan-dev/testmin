@@ -1634,6 +1634,48 @@ module Testmin
 		exit
 	end
 	
+	# bool
+	def self.bool(test_name, is, should, opts={})
+		# hr __method.to_s__
+		
+		# default options
+		opts = {'should'=>true}.merge(opts)
+		
+		# should should be defined
+		if should.nil?
+			raise ExceptionPlus::Internal.new('bool~should-not-defined', 'jzVjv', '"should" is not defined')
+		end
+		
+		# test
+		if should
+			if not is
+				tmfail(test_name, 'should be true but is not')
+			end
+		else
+			if is
+				tmfail(test_name, 'should not be true but is')
+			end
+		end
+		
+		# return
+		return true
+	end
+	
+	# bool_comp
+	# Not a test. Returns true if the values are either both true or
+	def self.bool_comp(a, b)
+		# hr __method.to_s__
+		
+		# both true
+		if a and b
+			return true
+		elsif (not a) and (not b)
+			return true
+		else
+			return false
+		end
+	end
+	
 	#
 	# ruby utilities for running tests
 	#===========================================================================
