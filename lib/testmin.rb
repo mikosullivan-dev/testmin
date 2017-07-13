@@ -1265,7 +1265,7 @@ module Testmin
 			
 			# loop through columns
 			line.each{|col|
-				widths[c] = (widths[c] && widths[c] > col.length) ? widths[c] : col.length
+				widths[c] = (widths[c] && widths[c] > col.to_s.length) ? widths[c] : col.to_s.length
 				c += 1
 			}
 		}
@@ -1274,7 +1274,7 @@ module Testmin
 		table.each do |line|
 			# print each column
 			line.each_with_index do |col, index|
-				Testmin.vp col.ljust(widths[index]) + '  '
+				Testmin.vp col.to_s.ljust(widths[index]) + '  '
 			end
 			
 			# add newline
@@ -1285,7 +1285,101 @@ module Testmin
 	# print_table
 	#---------------------------------------------------------------------------
 	
+	
+	#---------------------------------------------------------------------------
+	# showhash
+	#
+	def self.showhash (myhash)
+		# Testmin.hr __method__.to_s
+		
+		output = []
+		
+		myhash.each do |key, val|
+			output.push([key, val])
+		end
+		
+		Testmin.print_table(output)
+		
+		# rv = "<table border=1>\n"
+		# keys = myhash.keys.sort
+		#
+		# keys.each do |key, val|
+		# 	rv =
+		# 		rv +
+		# 		"<tr>\n" +
+		# 		"<td>" + CGI::escapeHTML(key.to_s) + "</td>\n" +
+		# 		"<td><pre>" + CGI::escapeHTML(myhash[key].to_s) + "</pre></td>\n" +
+		# 		"</tr>\n"
+		# end
+		#
+		# rv = rv + "</table>\n"
+		#
+		# # return
+		# return rv
+	end
+	
+	# KLUDGE: still can't figure out how to alias show_hash to showhash, so just
+	# writing another method for now.
+	def self.show_hash (myhash)
+		return self.showhash (myhash)
+	end
+	
+	#
+	# showhash
+	#---------------------------------------------------------------------------
+	
 
+	#---------------------------------------------------------------------------
+	# showarr
+	#
+	def self.showarr(myarr, opts={})
+		# default
+		opts = {'title'=>true}.merge(opts)
+		
+		# top bar
+		puts '--- array: ' + myarr.length.to_s + ' -----------------'
+	
+		if myarr.nil?
+			puts '[nil]'
+		else
+			# if it's not an array, make it one
+			if ! myarr.is_a?(Array)
+				myarr = [myarr]
+			end
+	
+			if myarr.length == 0
+				puts '[empty array]'
+				puts '------------------------------'
+			elsif
+				myarr.each do |el|
+					el = el.to_s.squeeze(' ')
+	
+					if el.match(/\S/sim)
+						el = el.sub(/\A\s+/sim, '')
+						el = el.sub(/\s+\z/sim, '')
+						el = el.gsub(/\s+/sim, ' ')
+	
+						puts el
+						puts '------------------------------'
+					else
+						next
+					end
+				end
+			end
+		end
+	end
+	
+	# KLUDGE: still can't figure out how to alias show_hash to showhash, so just
+	# writing another method for now.
+	def self.show_arr(myarr, opts={})
+		return self.showarr(myarr, opts)
+	end
+	
+	#
+	# showarr
+	#---------------------------------------------------------------------------
+	
+	
 	#---------------------------------------------------------------------------
 	# submit_results
 	# TODO: Need to generalize this routine for submitting to other test
