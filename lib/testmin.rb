@@ -253,7 +253,7 @@ module Testmin
 			dir['settings']['files'] = {}
 		else
 			if not dir['settings']['files'].is_a?(Hash)
-				raise 'files setting is not an hash for ' + dir_path
+				raise 'files setting is not a hash for ' + dir_path
 			end
 		end
 		
