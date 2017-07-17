@@ -1701,16 +1701,22 @@ module Testmin
 		# test
 		if opts['should']
 			if object.nil?
-				 tmfail(test_name, 'not defined but should be')
+				tmfail(test_name, 'not defined but should be')
 			end
 		else
-		# 	if not object.nil?
-		# 		tmfail(test_name, 'defined but should not be'
-		# 	end
+			if not object.nil?
+				tmfail(test_name, 'defined but should not be')
+			end
 		end
 		
 		# return
 		return true
+	end
+	
+	# nil
+	def self.is_nil(test_name, object, opts={})
+		opts = opts.merge('should'=>false)
+		return defined(test_name, object, opts)
 	end
 	
 	# tmfail
