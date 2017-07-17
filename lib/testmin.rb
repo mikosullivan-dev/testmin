@@ -1334,26 +1334,37 @@ module Testmin
 	#
 	def self.showarr(myarr, opts={})
 		# default
-		opts = {'title'=>true}.merge(opts)
+		opts = {'title'=>true, 'compact'=>false}.merge(opts)
 		
 		# top bar
 		puts '--- array: ' + myarr.length.to_s + ' -----------------'
-	
+		
+		# if nil
 		if myarr.nil?
 			puts '[nil]'
+		
+		# else show elements in array
 		else
+			# clone
+			usearr = myarr.clone
+			
 			# if it's not an array, make it one
-			if ! myarr.is_a?(Array)
-				myarr = [myarr]
+			if ! usearr.is_a?(Array)
+				usearr = [usearr]
 			end
 	
-			if myarr.length == 0
+			# if empty
+			if usearr.length == 0
 				puts '[empty array]'
 				puts '------------------------------'
+			
+			# else there's stuff in the array
 			elsif
-				myarr.each do |el|
+				usearr.each do |el|
+					# squeeze
 					el = el.to_s.squeeze(' ')
-	
+					
+					# if any non-spaces
 					if el.match(/\S/sim)
 						el = el.sub(/\A\s+/sim, '')
 						el = el.sub(/\s+\z/sim, '')
@@ -1361,8 +1372,6 @@ module Testmin
 	
 						puts el
 						puts '------------------------------'
-					else
-						next
 					end
 				end
 			end
@@ -1656,10 +1665,16 @@ module Testmin
 	
 	# comp
 	def self.comp(test_name, is, should, opts={})
-		# hr('comp()')
+		# hr __method__.to_s
 		
 		# default options
-		opts = {'should'=>true}.merge(opts)
+		opts = {'should'=>true, 'collapse'=>false}.merge(opts)
+		
+		# collapse
+		if opts['collapse']
+			is = Testmin.collapse(is)
+			should = Testmin.collapse(should)
+		end
 		
 		# test
 		if opts['should']
@@ -1768,6 +1783,31 @@ module Testmin
 		else
 			return false
 		end
+	end
+	
+	# has_key
+	def self.has_key(test_name, hash, key, opts={})
+		# hr __method__.to_s
+		
+		# default options
+		opts = {'should'=>true}.merge(opts)
+		
+		# get is
+		is = hash.key?(key)
+		
+		# test
+		if opts['should']
+			if not is
+				tmfail(test_name, 'should have key ' + key + ' but does not')
+			end
+		else
+			if is
+				tmfail(test_name, 'should have not key ' + key + ' but does')
+			end
+		end
+		
+		# return
+		return true
 	end
 	
 	#
