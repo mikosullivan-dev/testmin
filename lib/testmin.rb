@@ -275,7 +275,7 @@ module Testmin
 	# dir_check
 	#
 	def self.dir_check(log, dir)
-		# Testmin.hr(__method__.to_s)
+		# Testmin.hr(__method__)
 		
 		# convenience variables
 		files = dir['settings']['files']
@@ -341,7 +341,7 @@ module Testmin
 	# dir_run
 	#
 	def self.dir_run(log, dir, dir_order)
-		# Testmin.hr(__method__.to_s)
+		# Testmin.hr(__method__)
 		
 		# verbosify
 		if @dir_hrs
@@ -433,7 +433,7 @@ module Testmin
 	# get_file_settings
 	#
 	def self.get_file_settings(file_settings)
-		# Testmin.hr(__method__.to_s)
+		# Testmin.hr(__method__)
 		
 		# if false
 		if file_settings.is_a?(FalseClass)
@@ -462,7 +462,7 @@ module Testmin
 	# up.
 	#
 	def self.file_run(dir_files, file_path, file_settings, file_order)
-		# Testmin.hr(__method__.to_s)
+		# Testmin.hr(__method__)
 		
 		# get file settings
 		file_settings = Testmin.get_file_settings(file_settings)
@@ -610,7 +610,7 @@ module Testmin
 	# last_line
 	#
 	def self.last_line(str)
-		# Testmin.hr(__method__.to_s)
+		# Testmin.hr(__method__)
 		
 		# early exit: str is not a string
 		if not str.is_a?(String)
@@ -640,7 +640,7 @@ module Testmin
 	# parse_results
 	#
 	def self.parse_results(stdout)
-		# Testmin.hr(__method__.to_s)
+		# Testmin.hr(__method__)
 		
 		# get last line
 		last_line = Testmin.last_line(stdout)
@@ -674,7 +674,7 @@ module Testmin
 	# get_results
 	#
 	def self.get_results(stdout)
-		# Testmin.hr(__method__.to_s)
+		# Testmin.hr(__method__)
 		
 		# get results hash
 		results = parse_results(stdout)
@@ -740,10 +740,10 @@ module Testmin
 		opts = {'dash'=>'-', 'title'=>''}.merge(opts)
 		
 		# output
-		if opts['title'] == ''
+		if opts['title'].to_s == ''
 			self.v opts['dash'] * HR_LENGTH
 		else
-			self.v (opts['dash'] * 3) + ' ' + opts['title'] + ' ' + (opts['dash'] * (HR_LENGTH - 5 - opts['title'].length))
+			self.v (opts['dash'] * 3) + ' ' + opts['title'].to_s + ' ' + (opts['dash'] * (HR_LENGTH - 5 - opts['title'].to_s.length))
 		end
 	end
 	#
