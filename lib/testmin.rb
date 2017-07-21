@@ -1724,21 +1724,29 @@ module Testmin
 	
 	# tmfail
 	def self.tmfail(test_name, message)
-		# hr('fail()')
+		# hr __method__
 		
 		# title
 		puts
-		self.hr('dash'=>'#')
-		puts '# fail: ' + test_name
-		puts '#'
+		hr 'dash'=>'='
+		puts '= fail: ' + test_name
+		puts '='
+		puts
 		
 		# output message
+		hr 'title' => 'error'
 		puts message
 		
+		# output stack
+		puts
+		hr 'title' => 'stack'
+		puts caller
+		
 		# bottom
-		puts '#'
-		puts '# fail: ' + test_name
-		self.hr('dash'=>'#')
+		puts
+		puts '='
+		puts '= fail: ' + test_name
+		hr 'dash'=>'='
 		puts
 		
 		# we're done
