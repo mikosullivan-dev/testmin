@@ -1287,7 +1287,7 @@ module Testmin
 		
 		# if title
 		if opts['fields'].is_a?(Array)
-			table.unshift(opts['fields'])
+			self.table_line(widths, line, bars)
 		end
 		
 		# print each line
