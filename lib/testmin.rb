@@ -1258,9 +1258,15 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# print_table
 	#
-	def self.print_table(table)
+	def self.print_table(table, opts)
 		# initialize widths array
 		widths = []
+		
+		# default opts
+		opts = {'bars'=>true}.merge(opts)
+		
+		# determine if bar separators are necessary
+		bars = !opts['bars'].nil?
 		
 		# calculate maximum widths
 		table.each{|line|
@@ -1268,24 +1274,72 @@ module Testmin
 			
 			# loop through columns
 			line.each{|col|
+				# if bars, add two characters to col
+				if bars
+					col += ' '
+				end
+				
+				# get widths
 				widths[c] = (widths[c] && widths[c] > col.to_s.length) ? widths[c] : col.to_s.length
 				c += 1
 			}
 		}
 		
+		# if title
+		if opts['fields'].is_a?(Array)
+			table.unshift(opts['fields'])
+		end
+		
 		# print each line
 		table.each do |line|
-			# print each column
-			line.each_with_index do |col, index|
-				Testmin.vp col.to_s.ljust(widths[index]) + '  '
-			end
-			
-			# add newline
-			Testmin.vp "\n"
+			self.table_line(widths, line, bars)
 		end
 	end
 	#
 	# print_table
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# table_line
+	#
+	def self.table_line(widths, line, bars)
+			# print each column
+			line.each_with_index do |col, col_index|
+				self.field_col(widths, col, col_index, bars)
+			end
+			
+			# end of line
+			puts "\n"
+	end
+	#
+	# table_line
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# field_col
+	#
+	def self.field_col(widths, col, col_index, bars)
+		# output with bars
+		if bars
+			if col_index == 0
+				Testmin.vp '|  ' + col.to_s.ljust(widths[col_index])
+			else
+				Testmin.vp '  ' + col.to_s.ljust(widths[col_index]) + '  |'
+			end
+		
+		# else output plain
+		else
+			if line_index == 0
+				Testmin.vp col.to_s.ljust(widths[col_index])
+			else
+				Testmin.vp '  ' + col.to_s.ljust(widths[col_index])
+			end
+		end
+	end
+	#
+	# field_col
 	#---------------------------------------------------------------------------
 	
 	
