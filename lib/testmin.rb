@@ -1256,17 +1256,17 @@ module Testmin
 	
 	
 	#---------------------------------------------------------------------------
-	# print_table
+	# text_table
 	#
-	def self.print_table(table, opts)
-		# initialize widths array
+	def self.text_table(table, opts={})
 		widths = []
-		
-		# default opts
-		opts = {'bars'=>true}.merge(opts)
+		hr = []
 		
 		# determine if bar separators are necessary
 		bars = !opts['bars'].nil?
+		
+		# initialize return value
+		rv = ''
 		
 		# calculate maximum widths
 		table.each{|line|
@@ -1285,15 +1285,55 @@ module Testmin
 			}
 		}
 		
+		# include widths of fields
+		if opts['fields'].is_a?(Array)
+			c = 0
+			opts['fields'].each{|col|
+				# if bars, add two characters to col
+				if bars
+					col += ' '
+				end
+				
+				# get widths
+				widths[c] = (widths[c] && widths[c] > col.to_s.length) ? widths[c] : col.to_s.length
+				c += 1
+			}
+			
+		end
+		
+		# build hr
+		widths.each do |width|
+			hr.push('-' * width)
+		end
+		
+		# output top hr
+		if bars
+			rv += self.table_line(widths, hr, bars, 'show_bars'=>false)
+		end
+		
 		# if title
 		if opts['fields'].is_a?(Array)
-			self.table_line(widths, line, bars)
+			# output line
+			rv += self.table_line(widths, opts['fields'], bars)
+			
+			# output top hr
+			if bars
+				rv += self.table_line(widths, hr, bars, 'show_bars'=>false)
+			end
 		end
 		
 		# print each line
 		table.each do |line|
-			self.table_line(widths, line, bars)
+			rv += self.table_line(widths, line, bars)
 		end
+		
+		# output bottom hr
+		if bars
+			rv += self.table_line(widths, hr, bars, 'show_bars'=>false)
+		end
+		
+		# return
+		return rv
 	end
 	#
 	# print_table
@@ -1303,14 +1343,23 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# table_line
 	#
-	def self.table_line(widths, line, bars)
-			# print each column
-			line.each_with_index do |col, col_index|
-				self.field_col(widths, col, col_index, bars)
-			end
-			
-			# end of line
-			puts "\n"
+	def self.table_line(widths, line, bars, opts={})
+		# default options
+		opts = {'show_bars'=>true}.merge(opts)
+		
+		# initialize return value
+		rv = ''
+		
+		# print each column
+		line.each_with_index do |col, col_index|
+			rv += self.field_col(widths, col, col_index, bars, opts)
+		end
+		
+		# end of line
+		rv += "\n"
+		
+		# return
+		return rv
 	end
 	#
 	# table_line
@@ -1320,23 +1369,36 @@ module Testmin
 	#---------------------------------------------------------------------------
 	# field_col
 	#
-	def self.field_col(widths, col, col_index, bars)
+	def self.field_col(widths, col, col_index, bars, opts)
+		# initialize return value
+		rv = ''
+		
 		# output with bars
 		if bars
-			if col_index == 0
-				Testmin.vp '|  ' + col.to_s.ljust(widths[col_index])
+			# set bar
+			if opts['show_bars']
+				bar = '|'
 			else
-				Testmin.vp '  ' + col.to_s.ljust(widths[col_index]) + '  |'
+				bar = ' '
+			end
+			
+			if col_index == 0
+				rv += "#{bar}  " + col.to_s.ljust(widths[col_index])
+			else
+				rv += '  ' + col.to_s.ljust(widths[col_index]) + "  #{bar}"
 			end
 		
 		# else output plain
 		else
-			if line_index == 0
-				Testmin.vp col.to_s.ljust(widths[col_index])
+			if col_index == 0
+				rv += col.to_s.ljust(widths[col_index])
 			else
-				Testmin.vp '  ' + col.to_s.ljust(widths[col_index])
+				rv += '  ' + col.to_s.ljust(widths[col_index])
 			end
 		end
+		
+		# return
+		return rv
 	end
 	#
 	# field_col
