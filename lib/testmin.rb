@@ -1336,7 +1336,7 @@ module Testmin
 		return rv
 	end
 	#
-	# print_table
+	# text_table
 	#---------------------------------------------------------------------------
 	
 	
@@ -1417,7 +1417,7 @@ module Testmin
 			output.push([key, val])
 		end
 		
-		Testmin.print_table(output)
+		puts Testmin.text_table(output)
 		
 		# rv = "<table border=1>\n"
 		# keys = myhash.keys.sort
@@ -1631,7 +1631,7 @@ module Testmin
 		end
 		
 		# output urls
-		Testmin.print_table(table)
+		puts Testmin.text_table(table)
 	end
 	#
 	# submit_success
