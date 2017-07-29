@@ -190,7 +190,7 @@ module Testmin
 		end
 		
 		# normalize dir_path to remove trailing / if there is one
-		dir_path = dir_path.gsub(/\/+\z/, '')
+		dir_path = dir_path.gsub(/\/+\z/imu, '')
 		
 		# initialize directory properties and settings
 		dir = {}
@@ -347,7 +347,7 @@ module Testmin
 		if @dir_hrs
 			if dir['title'].nil?
 				dir_path_display = dir['path']
-				dir_path_display = dir_path_display.sub(/\A\.\//, '')
+				dir_path_display = dir_path_display.sub(/\A\.\//imu, '')
 			else
 				dir_path_display = dir['title']
 			end
@@ -362,7 +362,7 @@ module Testmin
 		if dir_key == '.'
 			dir_key = './'
 		else
-			dir_key = dir_key.gsub(/\A.\//, '')
+			dir_key = dir_key.gsub(/\A.\//imu, '')
 		end
 		
 		# initialize success to true
@@ -1043,7 +1043,7 @@ module Testmin
 			response = $stdin.gets.chomp
 			
 			# normalize response
-			response = response.gsub(/\A\s+/, '')
+			response = response.gsub(/\A\s+/imu, '')
 			response = response.downcase
 			response = response[0,1]
 			
@@ -1242,9 +1242,9 @@ module Testmin
 		
 		# only process defined strings
 		if str.is_a?(String)
-			str = str.gsub(/^[ \t\r\n]+/, '')
-			str = str.gsub(/[ \t\r\n]+$/, '')
-			str = str.gsub(/[ \t\r\n]+/, ' ')
+			str = str.gsub(/^[ \t\r\n]+/imu, '')
+			str = str.gsub(/[ \t\r\n]+$/imu, '')
+			str = str.gsub(/[ \t\r\n]+/imu, ' ')
 		end
 		
 		# return
@@ -1484,10 +1484,10 @@ module Testmin
 					el = el.to_s.squeeze(' ')
 					
 					# if any non-spaces
-					if el.match(/\S/sim)
-						el = el.sub(/\A\s+/sim, '')
-						el = el.sub(/\s+\z/sim, '')
-						el = el.gsub(/\s+/sim, ' ')
+					if el.match(/\S/imu)
+						el = el.sub(/\A\s+/imu, '')
+						el = el.sub(/\s+\z/imu, '')
+						el = el.gsub(/\s+/imu, ' ')
 	
 						puts el
 						puts '------------------------------'
@@ -1661,7 +1661,7 @@ module Testmin
 					# field substitutions
 					fields.each do |key, val|
 						# TODO: need to meta quote the key name
-						template = template.gsub(/\[\[\s*#{key}\s*\]\]/i, val.to_s)
+						template = template.gsub(/\[\[\s*#{key}\s*\]\]/imu, val.to_s)
 					end
 					
 					# return
