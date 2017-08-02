@@ -1453,7 +1453,7 @@ module Testmin
 	#
 	def self.showarr(myarr, opts={})
 		# default
-		opts = {'title'=>true, 'compact'=>false}.merge(opts)
+		opts = {'title'=>true, 'show-nil'=>false}.merge(opts)
 		
 		# top bar
 		puts '--- array: ' + myarr.length.to_s + ' -----------------'
@@ -1480,18 +1480,27 @@ module Testmin
 			# else there's stuff in the array
 			elsif
 				usearr.each do |el|
-					# squeeze
-					el = el.to_s.squeeze(' ')
+					# if nil
+					if el.nil?
+						puts '[nil]'
 					
 					# if any non-spaces
-					if el.match(/\S/imu)
+					elsif el.match(/\S/imu)
+						# collapse spaces
 						el = el.sub(/\A\s+/imu, '')
 						el = el.sub(/\s+\z/imu, '')
 						el = el.gsub(/\s+/imu, ' ')
-	
+						
+						# output
 						puts el
-						puts '------------------------------'
+					
+					# else non-content string
+					else
+						puts '[nc]'
 					end
+					
+					# output separator
+					puts '------------------------------'
 				end
 			end
 		end
