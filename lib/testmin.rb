@@ -1471,7 +1471,7 @@ module Testmin
 			if ! usearr.is_a?(Array)
 				usearr = [usearr]
 			end
-	
+			
 			# if empty
 			if usearr.length == 0
 				puts '[empty array]'
@@ -1484,19 +1484,26 @@ module Testmin
 					if el.nil?
 						puts '[nil]'
 					
-					# if any non-spaces
-					elsif el.match(/\S/imu)
-						# collapse spaces
-						el = el.sub(/\A\s+/imu, '')
-						el = el.sub(/\s+\z/imu, '')
-						el = el.gsub(/\s+/imu, ' ')
+					# else if string
+					elsif el.is_a?(String)
+						# if any non-spaces
+						if el.match(/\S/imu)
+							# collapse spaces
+							el = el.sub(/\A\s+/imu, '')
+							el = el.sub(/\s+\z/imu, '')
+							el = el.gsub(/\s+/imu, ' ')
+							
+							# output
+							puts el
 						
-						# output
-						puts el
+						# else non-content string
+						else
+							puts '[nc]'
+						end
 					
-					# else non-content string
+					# else other object
 					else
-						puts '[nc]'
+						puts el.to_s
 					end
 					
 					# output separator
