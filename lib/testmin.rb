@@ -226,6 +226,9 @@ module Testmin
 			end
 		end
 		
+		# TESTING
+		# puts dir_settings
+		
 		# src: if a source directory is given, recurse to get that directory's
 		# settings
 		if not dir['settings']['src'].nil?
