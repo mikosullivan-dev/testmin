@@ -1890,14 +1890,20 @@ module Testmin
 	
 	# devexit
 	def self.devexit()
-		# self.hr(__method__.to_s)
+		# hr __method__
 		puts "\n", '[devexit]'
 		exit
 	end
 	
+	# arr_comp
+	def self.arr_comp(test_name, is, should, opts={})
+		hr __method__
+		# return bool
+	end
+	
 	# bool
 	def self.bool(test_name, is, should, opts={})
-		# hr __method.to_s__
+		# hr __method__
 		
 		# default options
 		opts = {'should'=>true}.merge(opts)
@@ -1969,27 +1975,6 @@ module Testmin
 end
 #
 # Testmin
-################################################################################
-
-
-################################################################################
-# Array
-#
-class ::Array
-	def show()
-		return '[' + self.join('|') + ']'
-	end
-	
-	def Array.as_a(el)
-		if el.is_a?(Array)
-			return el
-		else
-			return [el]
-		end
-	end
-end
-#
-# Array
 ################################################################################
 
 
