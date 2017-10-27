@@ -236,7 +236,7 @@ module Testmin
 				log,
 				run_dirs,
 				dir['settings']['src'],
-				{'dir-order'=>dir['settings']['dir-order']}
+				{ 'dir-order'=>dir['settings']['dir-order'] }
 			)
 		end
 		
