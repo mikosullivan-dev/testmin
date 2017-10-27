@@ -338,24 +338,25 @@ module Testmin
 	#
 	# dir_check
 	#---------------------------------------------------------------------------
-
-
+	
+	
 	#---------------------------------------------------------------------------
 	# dir_run
 	#
 	def self.dir_run(log, dir, dir_order)
-		# Testmin.hr(__method__)
+		# Testmin.hr __method__
+		# puts dir
 		
 		# verbosify
 		if @dir_hrs
-			if dir['title'].nil?
+			if dir['settings']['title'].nil?
 				dir_path_display = dir['path']
 				dir_path_display = dir_path_display.sub(/\A\.\//imu, '')
 			else
-				dir_path_display = dir['title']
+				dir_path_display = dir['settings']['title']
 			end
 			
-			Testmin.hr('title'=>dir_path_display, 'dash'=>'=')
+			Testmin.hr 'title'=>dir_path_display, 'dash'=>'='
 		end
 		
 		# build hash key
