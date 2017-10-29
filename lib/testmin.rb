@@ -1263,6 +1263,8 @@ module Testmin
 	# text_table
 	#
 	def self.text_table(table, opts={})
+		# Testmin.hr __method__
+		
 		widths = []
 		hr = []
 		
@@ -1413,15 +1415,26 @@ module Testmin
 	# showhash
 	#
 	def self.showhash (myhash)
-		# Testmin.hr __method__.to_s
+		# Testmin.hr __method__
 		
-		output = []
+		# if empty, output that
+		if myhash.length == 0
+			puts '[empty hash]'
 		
-		myhash.each do |key, val|
-			output.push([key, val])
+		# else display hash as a table
+		else
+			# initialize output array
+			output = []
+			
+			# get keys and values
+			myhash.keys.sort.each do |mykey|
+				output.push([mykey, myhash[mykey]])
+			end
+			
+			# output text table
+			puts Testmin.text_table(output)
 		end
 		
-		puts Testmin.text_table(output)
 		
 		# rv = "<table border=1>\n"
 		# keys = myhash.keys.sort
