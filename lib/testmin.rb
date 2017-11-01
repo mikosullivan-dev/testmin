@@ -1473,8 +1473,31 @@ module Testmin
 	# showarr
 	#
 	def self.showarr(myarr, opts={})
+		# single line
+		if opts['line'] || opts['single']
+			Testmin.showarr_single_line(myarr, opts)
+		else
+			Testmin.showarr_multiline(myarr, opts)
+		end
+	end
+	
+	# KLUDGE: still can't figure out how to alias show_hash to showhash, so just
+	# writing another method for now.
+	def self.show_arr(myarr, opts={})
+		return self.showarr(myarr, opts)
+	end
+	
+	#
+	# showarr
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# showarr_multiline
+	#
+	def self.showarr_multiline(myarr, opts={})
 		# default
-		opts = {'title'=>true, 'show-nil'=>false}.merge(opts)
+		opts = {'title'=>true}.merge(opts)
 		
 		# top bar
 		puts '--- array: ' + myarr.length.to_s + ' -----------------'
@@ -1501,31 +1524,7 @@ module Testmin
 			# else there's stuff in the array
 			elsif
 				usearr.each do |el|
-					# if nil
-					if el.nil?
-						puts '[nil]'
-					
-					# else if string
-					elsif el.is_a?(String)
-						# if any non-spaces
-						if el.match(/\S/imu)
-							# collapse spaces
-							el = el.sub(/\A\s+/imu, '')
-							el = el.sub(/\s+\z/imu, '')
-							el = el.gsub(/\s+/imu, ' ')
-							
-							# output
-							puts el
-						
-						# else non-content string
-						else
-							puts '[nc]'
-						end
-					
-					# else other object
-					else
-						puts el.to_s
-					end
+					puts Testmin.value_for_debug(el)
 					
 					# output separator
 					puts '------------------------------'
@@ -1533,15 +1532,89 @@ module Testmin
 			end
 		end
 	end
-	
-	# KLUDGE: still can't figure out how to alias show_hash to showhash, so just
-	# writing another method for now.
-	def self.show_arr(myarr, opts={})
-		return self.showarr(myarr, opts)
-	end
-	
 	#
-	# showarr
+	# showarr_multiline
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# showarr_single_line
+	#
+	def self.showarr_single_line(myarr, opts={})
+		# default
+		opts = {'sep'=>'|'}.merge(opts)
+		
+		# if nil
+		if myarr.nil?
+			puts '[nil]'
+		
+		# else show elements in array
+		else
+			# if it's not an array, make it one
+			if ! myarr.is_a?(Array)
+				myarr = [myarr]
+			end
+			
+			# if empty
+			if myarr.length == 0
+				puts '[empty array]'
+			
+			# else there's stuff in the array
+			# NOTE: Yes, the code in this section could be a little more
+			# efficient. Feel free to tidy it up and submit back.
+			else
+				show_arr = []
+				
+				# get values
+				myarr.each do |el|
+					show_arr.push Testmin.value_for_debug(el)
+				end
+				
+				# output
+				puts show_arr.join('|')
+			end
+		end
+	end
+	#
+	# showarr_single_line
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# value_for_debug
+	#
+	def self.value_for_debug(val)
+		# if nil
+		if val.nil?
+			return '[nil]'
+		
+		# else if string
+		elsif val.is_a?(String)
+			# if any non-spaces
+			if val.match(/\S/imu)
+				# clone
+				val = val.to_s + ''
+				
+				# collapse spaces
+				val.sub(/\A\s+/imu, '')
+				val.sub(/\s+\z/imu, '')
+				val.gsub(/\s+/imu, ' ')
+				
+				# return
+				return val
+			
+			# else non-content string
+			else
+				return '[nc]'
+			end
+		
+		# else other object
+		else
+			return val.to_s
+		end
+	end
+	#
+	# value_for_debug
 	#---------------------------------------------------------------------------
 	
 	
