@@ -761,6 +761,10 @@ module Testmin
 	def self.randstr()
 		return (('a'..'z').to_a + (0..9).to_a).shuffle[0,8].join
 	end
+	
+	def self.rand_str()
+		return self.randstr()
+	end
 	#
 	# randstr
 	#---------------------------------------------------------------------------
