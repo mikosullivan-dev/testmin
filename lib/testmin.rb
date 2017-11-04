@@ -1290,21 +1290,35 @@ module Testmin
 		rv = ''
 		
 		# calculate maximum widths
-		table.each{|line|
+		table.each do|line|
 			c = 0
 			
 			# loop through columns
-			line.each{|col|
-				# if bars, add two characters to col
-				if bars
-					col += ' '
+			line.each do |col|
+				# TESTING
+				# puts 'col class: ' + col.class.to_s
+				
+				# if col is an array, assume the second value is the string for output
+				# else use the col itself
+				if col.is_a?(Array)
+					col_use = col[1]
+				else
+					col_use = col
 				end
 				
+				# if bars, add two characters to col
+				if bars
+					col_use += ' '
+				end
+				
+				# set as string
+				col_use = col_use.to_s
+				
 				# get widths
-				widths[c] = (widths[c] && widths[c] > col.to_s.length) ? widths[c] : col.to_s.length
+				widths[c] = (widths[c] && widths[c] > col_use.length) ? widths[c] : col_use.length
 				c += 1
-			}
-		}
+			end
+		end
 		
 		# include widths of fields
 		if opts['fields'].is_a?(Array)
@@ -1345,7 +1359,16 @@ module Testmin
 		
 		# print each line
 		table.each do |line|
-			rv += self.table_line(widths, line, bars)
+			# if line is a hash, get just the values
+			# else send line itself
+			if line.is_a?(Hash)
+				line_use = line.values
+			else
+				line_use = line
+			end
+			
+			# add to return string
+			rv += self.table_line(widths, line_use, bars)
 		end
 		
 		# output bottom hr
