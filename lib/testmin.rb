@@ -1905,10 +1905,13 @@ module Testmin
 	
 	# comp
 	def self.comp(test_name, is, should, opts={})
-		# hr __method__.to_s
+		# $tm.hrm
 		
 		# default options
 		opts = {'should'=>true, 'collapse'=>false}.merge(opts)
+		
+		# TESTING
+		# puts opts
 		
 		# collapse
 		if opts['collapse']
@@ -1919,11 +1922,21 @@ module Testmin
 		# test
 		if opts['should']
 			if is != should
-				tmfail test_name, "not equal\nis: " + is.to_s() + "\nshould: " + should.to_s()
+				tmfail(
+					test_name,
+					"not equal\n" +
+					"is      : " + is.to_s() + "\n" +
+					"should: " + should.to_s()
+				)
 			end
 		else
 			if is == should
-				tmfail test_name, "equal\nis: " + is.to_s() + "\nshould: " + should.to_s()
+				tmfail(
+					test_name,
+					"equal\n" +
+					"is:     " + is.to_s() + "\n" +
+					"should: " + should.to_s()
+				)
 			end
 		end
 		
