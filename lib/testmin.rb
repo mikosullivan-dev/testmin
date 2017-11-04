@@ -53,6 +53,9 @@ module Testmin
 	@output = 'normal'
 	@user_email = nil
 	
+	# default show array single
+	@show_arr_default_single = true
+	
 	
 	#---------------------------------------------------------------------------
 	# DefaultSettings
@@ -1278,106 +1281,24 @@ module Testmin
 	# text_table
 	#
 	def self.text_table(table, opts={})
-		# Testmin.hr __method__
+		# $tm.hrm
 		
-		widths = []
-		hr = []
+		# if table is empty, assume the "rows" are arrays
+		if table.length == 0
+			return self.text_table_arrays(table, opts)
 		
-		# determine if bar separators are necessary
-		bars = !opts['bars'].nil?
+		# if first row is an array, return for array rows
+		elsif table[0].is_a?(Array)
+			return self.text_table_arrays(table, opts)
 		
-		# initialize return value
-		rv = ''
+		# if first row is hash, return for hash rows
+		elsif table[0].is_a?(Hash)
+			return self.text_table_hashes(table, opts)
 		
-		# calculate maximum widths
-		table.each do|line|
-			c = 0
-			
-			# loop through columns
-			line.each do |col|
-				# TESTING
-				# puts 'col class: ' + col.class.to_s
-				
-				# if col is an array, assume the second value is the string for output
-				# else use the col itself
-				if col.is_a?(Array)
-					col_use = col[1]
-				else
-					col_use = col
-				end
-				
-				# if bars, add two characters to col
-				if bars
-					col_use += ' '
-				end
-				
-				# set as string
-				col_use = col_use.to_s
-				
-				# get widths
-				widths[c] = (widths[c] && widths[c] > col_use.length) ? widths[c] : col_use.length
-				c += 1
-			end
+		# else unknown row types
+		else
+			raise 'unknown row types'
 		end
-		
-		# include widths of fields
-		if opts['fields'].is_a?(Array)
-			c = 0
-			opts['fields'].each{|col|
-				# if bars, add two characters to col
-				if bars
-					col += ' '
-				end
-				
-				# get widths
-				widths[c] = (widths[c] && widths[c] > col.to_s.length) ? widths[c] : col.to_s.length
-				c += 1
-			}
-			
-		end
-		
-		# build hr
-		widths.each do |width|
-			hr.push('-' * width)
-		end
-		
-		# output top hr
-		if bars
-			rv += self.table_line(widths, hr, bars, 'show_bars'=>false)
-		end
-		
-		# if title
-		if opts['fields'].is_a?(Array)
-			# output line
-			rv += self.table_line(widths, opts['fields'], bars)
-			
-			# output top hr
-			if bars
-				rv += self.table_line(widths, hr, bars, 'show_bars'=>false)
-			end
-		end
-		
-		# print each line
-		table.each do |line|
-			# if line is a hash, get just the values
-			# else send line itself
-			if line.is_a?(Hash)
-				line_use = line.values
-			else
-				line_use = line
-			end
-			
-			# add to return string
-			rv += self.table_line(widths, line_use, bars)
-		end
-		
-		# output bottom hr
-		if bars
-			rv += self.table_line(widths, hr, bars, 'show_bars'=>false)
-		end
-		
-		# return
-		return rv
 	end
 	#
 	# text_table
@@ -1385,9 +1306,206 @@ module Testmin
 	
 	
 	#---------------------------------------------------------------------------
+	# text_table_arrays
+	#
+	def self.text_table_arrays(table, opts={})
+		# $tm.hrm
+		
+		# initialize stuff
+		rv = ''
+		col_widths = []
+		hrs = []
+		
+		# determine if bar separators are necessary
+		bars = !opts['bars'].nil?
+		
+		# calculate maximum widths
+		table.each do|line|
+			row_widths = self.tuple_widths(line)
+			self.max_widths(col_widths, row_widths)
+		end
+		
+		# include widths of fields
+		if opts['fields'].is_a?(Array)
+			row_widths = self.tuple_widths(opts['fields'])
+			self.max_widths(col_widths, row_widths)
+		end
+		
+		# output top hrs
+		if bars
+			col_widths.each do |width|
+				hrs.push('-' * width)
+			end
+			
+			rv += self.table_line(col_widths, hrs, bars, 'show_bars'=>false)
+		end
+		
+		# if title
+		if opts['fields'].is_a?(Array)
+			# output line
+			rv += self.table_line(col_widths, opts['fields'], bars)
+			
+			# output hr
+			if bars
+				rv += self.table_line(col_widths, hrs, bars, 'show_bars'=>false)
+			end
+		end
+		
+		# print each line
+		table.each do |line|
+			rv += self.table_line(col_widths, line, bars)
+		end
+		
+		# output bottom hr
+		if bars
+			rv += self.table_line(col_widths, hrs, bars, 'show_bars'=>false)
+		end
+		
+		# return
+		return rv
+	end
+	#
+	# text_table_arrays
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# text_table_hashes
+	#
+	def self.text_table_hashes(table, opts={})
+		$tm.hrm
+		
+		# get field names
+		unless fields = opts['fields']
+			fields = table[0].keys
+		end
+		
+		# determine if bar separators are necessary
+		bars = !opts['bars'].nil?
+		
+		# initialize stuff
+		rv = ''
+		col_widths = []
+		hrs = []
+		
+		# calculate maximum widths of values
+		table.each do|row|
+			row_widths = self.tuple_widths(self.row_to_tuple(fields, row))
+			self.max_widths(col_widths, row_widths)
+		end
+		
+		# include field names in widths of columns
+		self.max_widths( col_widths, self.tuple_widths(fields) )
+		
+		# build hr
+		if bars
+			col_widths.each do |width|
+				hrs.push('-' * width)
+			end
+		end
+		
+		# output top hr
+		if bars
+			rv += self.table_line(col_widths, hrs, bars, 'show_bars'=>false)
+		end
+		
+		# print field names
+		rv += self.table_line(col_widths, fields, bars)
+		
+		# output top hr
+		if bars
+			rv += self.table_line(col_widths, hrs, bars, 'show_bars'=>false)
+		end
+		
+		# print each line
+		table.each do |row|
+			tuple = self.row_to_tuple(fields, row)
+			rv += self.table_line(col_widths, tuple, bars)
+		end
+		
+		# output bottom hr
+		if bars
+			rv += self.table_line(col_widths, hrs, bars, 'show_bars'=>false)
+		end
+		
+		# return
+		return rv
+	end
+	#
+	# text_table_hashes
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# max_widths
+	#
+	def self.max_widths(maxes, row_widths)
+		# $tm.hrm
+		
+		# loop through row
+		for idx in 0 .. row_widths.length-1
+			maxes[idx] ||= 0
+			
+			if row_widths[idx] > maxes[idx]
+				maxes[idx] = row_widths[idx]
+			end
+		end
+	end
+	#
+	# max_widths
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# row_to_tuple
+	#
+	def self.row_to_tuple(fields, row)
+		# initialize return tuple
+		rv = []
+		
+		# loop through row hash
+		fields.each do |fn|
+			rv.push(row[fn])
+		end
+		
+		# return
+		return rv
+	end
+	#
+	# row_to_tuple
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
+	# tuple_widths
+	#
+	def self.tuple_widths(tuple)
+		# $tm.hrm
+		rv = []
+		
+		# loop through cols
+		tuple.each do |col|
+			rv.push(col.to_s.length)
+		end
+		
+		# return
+		return rv
+	end
+	#
+	# tuple_widths
+	#---------------------------------------------------------------------------
+	
+	
+	#---------------------------------------------------------------------------
 	# table_line
 	#
 	def self.table_line(widths, line, bars, opts={})
+		# TESTING
+		if line.nil?
+			puts 'nil line'
+			$tm.devexit
+		end
+		
 		# default options
 		opts = {'show_bars'=>true}.merge(opts)
 		
@@ -1502,13 +1620,16 @@ module Testmin
 	# showhash
 	#---------------------------------------------------------------------------
 	
-
+	
 	#---------------------------------------------------------------------------
 	# showarr
 	#
 	def self.showarr(myarr, opts={})
+		# default options
+		opts = {'single' => @show_arr_default_single}.merge(opts)
+		
 		# single line
-		if opts['line'] || opts['single']
+		if opts['single']
 			Testmin.showarr_single_line(myarr, opts)
 		else
 			Testmin.showarr_multiline(myarr, opts)
