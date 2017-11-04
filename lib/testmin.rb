@@ -1373,7 +1373,7 @@ module Testmin
 	# text_table_hashes
 	#
 	def self.text_table_hashes(table, opts={})
-		$tm.hrm
+		# $tm.hrm
 		
 		# get field names
 		unless fields = opts['fields']
@@ -1500,12 +1500,6 @@ module Testmin
 	# table_line
 	#
 	def self.table_line(widths, line, bars, opts={})
-		# TESTING
-		if line.nil?
-			puts 'nil line'
-			$tm.devexit
-		end
-		
 		# default options
 		opts = {'show_bars'=>true}.merge(opts)
 		
