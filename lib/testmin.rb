@@ -2169,12 +2169,6 @@ module Testmin
 		exit
 	end
 	
-	# arr_comp
-	def self.arr_comp(test_name, is, should, opts={})
-		hr __method__
-		# return bool
-	end
-	
 	# bool
 	def self.bool(test_name, is, should, opts={})
 		# hr __method__
