@@ -2142,9 +2142,14 @@ module Testmin
 	end
 	
 	# devexit
-	def self.devexit()
-		# hr __method__
-		puts "\n", '[devexit]'
+	def self.devexit(msg=nil)
+		# default message
+		if msg.nil?
+			msg = 'devexit'
+		end
+		
+		# output
+		puts "\n", '[' + msg.to_s + ']'
 		exit
 	end
 	
