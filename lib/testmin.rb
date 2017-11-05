@@ -736,21 +736,35 @@ module Testmin
 	# hr
 	#
 	def self.hr(opts={})
-		# set opts from scalar or hash
-		if opts.nil?
-			opts = {}
-		elsif not opts.is_a?(Hash)
+		# if opts is a string, use that string as the title
+		if opts.is_a?(String)
 			opts = {'title'=>opts}
 		end
 		
 		# set default dash
 		opts = {'dash'=>'-', 'title'=>''}.merge(opts)
 		
-		# output
-		if opts['title'].to_s == ''
-			self.v opts['dash'] * HR_LENGTH
+		# with block
+		if block_given?
+			# top hr
+			self.hr(opts)
+			
+			# call block
+			yield
+			
+			# same options but without title
+			cloned = opts.clone
+			cloned.delete('title')
+			
+			# bottom hr
+			self.hr(cloned)
 		else
-			self.v (opts['dash'] * 3) + ' ' + opts['title'].to_s + ' ' + (opts['dash'] * (HR_LENGTH - 5 - opts['title'].to_s.length))
+			# output
+			if opts['title'].to_s == ''
+				self.v opts['dash'] * HR_LENGTH
+			else
+				self.v (opts['dash'] * 3) + ' ' + opts['title'].to_s + ' ' + (opts['dash'] * (HR_LENGTH - 5 - opts['title'].to_s.length))
+			end
 		end
 	end
 	#
@@ -2145,11 +2159,13 @@ module Testmin
 	def self.devexit(msg=nil)
 		# default message
 		if msg.nil?
-			msg = 'devexit'
+			msg = '[devexit]'
+		else
+			msg = '[devexit: ' + msg.to_s + ']'
 		end
 		
 		# output
-		puts "\n", '[' + msg.to_s + ']'
+		puts msg
 		exit
 	end
 	
