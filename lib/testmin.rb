@@ -2063,7 +2063,7 @@ module Testmin
 				tmfail(
 					test_name,
 					"not equal\n" +
-					"is      : " + is.to_s() + "\n" +
+					"is:     " + is.to_s() + "\n" +
 					"should: " + should.to_s()
 				)
 			end
