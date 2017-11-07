@@ -208,7 +208,7 @@ module Testmin
 			begin
 				dir_settings = JSON.parse(File.read(settings_path))
 				dir['settings'] = dir['settings'].merge(dir_settings)
-			rescue Exception => e
+			rescue StandardError => e
 				# verbosify.v
 				Testmin.v 'error parsing directory settings file: ' + dir_path
 				

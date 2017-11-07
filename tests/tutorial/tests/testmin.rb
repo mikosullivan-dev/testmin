@@ -200,7 +200,7 @@ module Testmin
 			begin
 				dir_settings = JSON.parse(File.read(settings_path))
 				dir['settings'] = dir['settings'].merge(dir_settings)
-			rescue Exception => e
+			rescue StandardError => e
 				# note error in directory log
 				dir['success'] = false
 				dir['errors'] = [
