@@ -2178,7 +2178,7 @@ module Testmin
 		
 		# should should be defined
 		if should.nil?
-			raise ExceptionPlus::Internal.new('bool~should-not-defined', 'jzVjv', '"should" is not defined')
+			raise StandardErrorPlus::Internal.new('bool~should-not-defined', 'jzVjv', '"should" is not defined')
 		end
 		
 		# test
