@@ -166,7 +166,7 @@ module Testmin
 	#
 	# done
 	#---------------------------------------------------------------------------
-
+	
 	
 	#---------------------------------------------------------------------------
 	# devshortcut
@@ -178,13 +178,13 @@ module Testmin
 	#
 	# devshortcut
 	#---------------------------------------------------------------------------
-
-
+	
+	
 	#---------------------------------------------------------------------------
 	# dir_settings
 	#
 	def self.dir_settings(log, run_dirs, dir_path, opts = {})
-		# hr __method__.to_s + ': ' + dir_path.class.to_s
+		# hr __method__.to_s
 		
 		# dir_path should be defined
 		if dir_path.nil?
@@ -229,17 +229,21 @@ module Testmin
 			end
 		end
 		
-		# TESTING
-		# puts dir_settings
-		
 		# src: if a source directory is given, recurse to get that directory's
 		# settings
 		if not dir['settings']['src'].nil?
+			# don't recurse a second time
+			if opts['recursing']
+				puts dir['settings']['src']
+				raise 'recursing too many times in dir_setting'
+			end
+			
+			# recurse
 			return Testmin.dir_settings(
 				log,
 				run_dirs,
 				dir['settings']['src'],
-				{ 'dir-order'=>dir['settings']['dir-order'] }
+				{ 'dir-order'=>dir['settings']['dir-order'], 'recursing'=>true }
 			)
 		end
 		
@@ -358,6 +362,9 @@ module Testmin
 			else
 				dir_path_display = dir['settings']['title']
 			end
+			
+			# TESTING
+			# dir_path_display = dir['path']
 			
 			Testmin.hr 'title'=>dir_path_display, 'dash'=>'='
 		end
